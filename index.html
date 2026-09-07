@@ -4,6 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Каллиграфия</title>
+    
+    <!-- PWA -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Каллиграфия">
+    <meta name="theme-color" content="#1a1512">
+    <meta name="description" content="Тренажёр китайской каллиграфии">
+    
     <script src="https://cdn.jsdelivr.net/npm/hanzi-writer@3.5/dist/hanzi-writer.min.js">
     </script>
     <style>
@@ -17,57 +26,68 @@
         body {
             background: #1a1512;
             min-height: 100vh;
+            min-height: -webkit-fill-available;
             display: flex;
             justify-content: center;
             align-items: center;
-            font-family: 'Georgia', serif;
-            padding: 8px;
+            font-family: 'Georgia', 'Times New Roman', serif;
+            padding: 0.4rem;
+            touch-action: none;
         }
+        html {
+            height: -webkit-fill-available;
+        }
+
         .app {
             background: #f5efe6;
-            padding: 12px;
-            border-radius: 28px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.7);
+            background-image: radial-gradient(circle at 30% 20%, #fcf8f2 0%, #ece3d5 100%);
+            padding: 0.6rem 0.6rem 0.8rem;
+            border-radius: 2rem;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.7), 0 0 0 3px #c4b5a0 inset;
             width: 100%;
-            max-width: 480px;
+            max-width: 520px;
             display: flex;
             flex-direction: column;
-            gap: 8px;
+            gap: 0.5rem;
+            position: relative;
         }
+
+        /* SVG-иконка для PWA (скрытая, используется как favicon) */
+        .pwa-icon {
+            display: none;
+        }
+
         .thumbnails {
             display: flex;
-            gap: 4px;
+            gap: 0.2rem;
             flex-wrap: wrap;
             justify-content: center;
             background: rgba(255, 248, 240, 0.5);
-            padding: 6px 10px;
-            border-radius: 16px;
+            padding: 0.25rem 0.4rem;
+            border-radius: 1.2rem;
             border: 1px solid #d6c8b4;
-            min-height: 36px;
+            min-height: 2rem;
             align-items: center;
         }
         .thumb {
-            font-size: 18px;
-            padding: 2px 6px;
-            border-radius: 6px;
+            font-size: 1.1rem;
+            font-family: 'Georgia', serif;
+            color: #6a5f55;
+            padding: 0.05rem 0.25rem;
+            border-radius: 0.3rem;
             cursor: pointer;
-            opacity: 0.4;
             transition: all 0.15s;
+            opacity: 0.4;
+            line-height: 1.3;
             display: flex;
             flex-direction: column;
             align-items: center;
-            line-height: 1.1;
-            border: 1px solid transparent;
-        }
-        .thumb .num {
-            font-size: 8px;
-            color: #b8a898;
         }
         .thumb.active {
             opacity: 1;
+            color: #3d3228;
             background: rgba(212, 168, 64, 0.2);
-            border-color: #d4a840;
-            transform: scale(1.05);
+            transform: scale(1.08);
         }
         .thumb.playing {
             animation: pulse 0.5s ease 3;
@@ -82,38 +102,48 @@
                 color: #d4a840;
             }
         }
+        .thumb .num {
+            font-size: 0.4rem;
+            color: #b8a898;
+            line-height: 1;
+            margin-top: -1px;
+        }
+        .thumb .char {
+            line-height: 1.2;
+        }
 
         .input-row {
             display: flex;
-            gap: 6px;
+            gap: 0.4rem;
             background: rgba(255, 248, 240, 0.6);
-            padding: 4px 8px;
-            border-radius: 20px;
+            padding: 0.3rem 0.5rem;
+            border-radius: 1.5rem;
             border: 2px solid #d6c8b4;
+            box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.04);
         }
         .input-row input {
             flex: 1;
             background: transparent;
             border: none;
             outline: none;
-            font-size: 16px;
+            font-size: 1rem;
             font-family: 'Georgia', serif;
             color: #3d3228;
-            padding: 4px 6px;
+            padding: 0.2rem 0.4rem;
             min-width: 0;
             letter-spacing: 1px;
         }
         .input-row input::placeholder {
             color: #b8a898;
             font-style: italic;
-            font-size: 14px;
+            font-size: 0.85rem;
         }
         .input-row button {
             background: #d6c8b4;
             border: none;
-            border-radius: 16px;
-            padding: 4px 14px;
-            font-size: 14px;
+            border-radius: 1.2rem;
+            padding: 0.25rem 0.9rem;
+            font-size: 0.9rem;
             font-weight: 700;
             color: #3d3228;
             cursor: pointer;
@@ -129,13 +159,14 @@
 
         .writer-wrap {
             background: #fcf8f0;
-            border-radius: 20px;
-            box-shadow: 0 6px 0 #c4b5a0;
-            padding: 6px;
+            border-radius: 1.5rem;
+            box-shadow: 0 6px 0 #c4b5a0, 0 12px 30px rgba(0, 0, 0, 0.12);
+            padding: 0.4rem;
             position: relative;
             width: 100%;
             aspect-ratio: 1/1;
             overflow: hidden;
+            transition: transform 0.1s;
         }
         .writer-wrap.shake {
             animation: shake 0.4s cubic-bezier(.36, .07, .19, .97) both;
@@ -162,7 +193,7 @@
         #hw {
             width: 100%;
             height: 100%;
-            border-radius: 14px;
+            border-radius: 1rem;
             position: relative;
         }
         #hw svg {
@@ -179,13 +210,13 @@
             height: 100%;
             z-index: 20;
             pointer-events: auto;
-            border-radius: 14px;
+            border-radius: 1rem;
             cursor: crosshair;
         }
         .draw-overlay canvas {
             width: 100%;
             height: 100%;
-            border-radius: 14px;
+            border-radius: 1rem;
             display: block;
             touch-action: none;
         }
@@ -194,19 +225,21 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 2px 6px;
+            padding: 0.05rem 0.3rem;
+            gap: 0.3rem;
+            flex-wrap: wrap;
         }
         .info .label {
-            font-size: 14px;
+            font-size: 0.85rem;
             font-weight: 600;
             color: #4a3f35;
             opacity: 0.7;
             font-style: italic;
         }
         .info .status {
-            font-size: 11px;
-            padding: 2px 10px;
-            border-radius: 12px;
+            font-size: 0.65rem;
+            padding: 0.1rem 0.5rem;
+            border-radius: 1rem;
             background: #d6c8b4;
             color: #3d3228;
             font-weight: 600;
@@ -232,58 +265,58 @@
 
         .hint {
             text-align: center;
-            font-size: 13px;
+            font-size: 0.75rem;
             color: #7a6f65;
             font-style: italic;
-            min-height: 1.2em;
+            min-height: 1em;
             font-family: 'Georgia', serif;
         }
 
         .settings {
             display: flex;
-            gap: 8px;
+            gap: 0.5rem;
             align-items: center;
             flex-wrap: wrap;
             background: rgba(255, 248, 240, 0.4);
-            padding: 4px 10px;
-            border-radius: 16px;
+            padding: 0.25rem 0.5rem;
+            border-radius: 1.2rem;
             border: 1px solid #d6c8b4;
         }
         .settings label {
-            font-size: 11px;
+            font-size: 0.65rem;
             color: #6a5f55;
             display: flex;
             align-items: center;
-            gap: 4px;
+            gap: 0.2rem;
             font-weight: 600;
         }
         .settings input[type="range"] {
-            width: 50px;
+            width: 55px;
             accent-color: #b8a898;
             background: #d6c8b4;
             border-radius: 10px;
             height: 3px;
         }
         .settings span {
-            font-size: 11px;
+            font-size: 0.65rem;
             color: #3d3228;
-            min-width: 16px;
+            min-width: 18px;
             font-weight: 700;
         }
 
         .controls {
             display: flex;
-            gap: 4px;
+            gap: 0.35rem;
             flex-wrap: wrap;
         }
         .controls .btn {
             flex: 1;
-            min-width: 44px;
+            min-width: 42px;
             background: #d6c8b4;
             border: none;
-            border-radius: 12px;
-            padding: 8px 4px;
-            font-size: 12px;
+            border-radius: 0.9rem;
+            padding: 0.4rem 0.15rem;
+            font-size: 0.7rem;
             font-weight: 700;
             color: #3d3228;
             box-shadow: 0 3px 0 #b8a898;
@@ -320,7 +353,7 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%) scale(0.5);
-            font-size: clamp(20px, 5vw, 30px);
+            font-size: clamp(1.2rem, 4vw, 1.8rem);
             font-weight: 800;
             color: #d4a840;
             text-shadow: 0 2px 20px rgba(0, 0, 0, 0.15);
@@ -347,20 +380,54 @@
                 transform: translate(-50%, -100%) scale(1);
             }
         }
+
+        /* Иконка для PWA через CSS (круг с иероглифом) */
+        .pwa-icon-css {
+            position: fixed;
+            top: -9999px;
+            left: -9999px;
+            width: 512px;
+            height: 512px;
+            border-radius: 80px;
+            background: #f5efe6;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 200px;
+            font-family: 'Georgia', serif;
+            color: #1a1a1a;
+            border: 8px solid #c4b5a0;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+        .pwa-icon-css::after {
+            content: '永';
+            font-size: 280px;
+            line-height: 1;
+            color: #1a1a1a;
+            text-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+        }
+
         @media (max-width: 400px) {
             .app {
-                padding: 8px;
-            }
-            .controls .btn {
-                font-size: 10px;
-                padding: 6px 2px;
-                min-width: 36px;
-            }
-            .thumb {
-                font-size: 14px;
+                padding: 0.4rem;
             }
             .input-row input {
-                font-size: 14px;
+                font-size: 0.85rem;
+            }
+            .input-row button {
+                padding: 0.2rem 0.6rem;
+                font-size: 0.75rem;
+            }
+            .controls .btn {
+                font-size: 0.6rem;
+                padding: 0.35rem 0.1rem;
+                min-width: 35px;
+            }
+            .settings input[type="range"] {
+                width: 40px;
+            }
+            .thumb {
+                font-size: 0.9rem;
             }
         }
     </style>
@@ -368,6 +435,9 @@
 <body>
 
     <div class="app">
+        <!-- Скрытая иконка для PWA -->
+        <div class="pwa-icon-css" id="pwaIcon"></div>
+
         <div class="thumbnails" id="thumbs"></div>
 
         <div class="input-row">
@@ -406,7 +476,7 @@
 
     <script>
         // ============================================================
-        // ПРОСТАЯ РАБОЧАЯ ВЕРСИЯ
+        // ОСНОВНАЯ ЛОГИКА
         // ============================================================
         let chars = [];
         let idx = 0;
@@ -590,7 +660,7 @@
             chars.forEach((ch, i) => {
                 const el = document.createElement('div');
                 el.className = 'thumb' + (i === idx ? ' active' : '') + (i === playing ? ' playing' : '');
-                el.innerHTML = `<span class="num">${i+1}</span>${ch}`;
+                el.innerHTML = `<span class="num">${i+1}</span><span class="char">${ch}</span>`;
                 el.onclick = () => { if (!playingAll) { idx = i;
                         loadChar(ch); } };
                 thumbs.appendChild(el);
@@ -836,6 +906,15 @@
         allBtn.onclick = playAll;
         resetBtn.onclick = resetChar;
         nextBtn.onclick = nextChar;
+
+        // ============================================================
+        // PWA — Service Worker
+        // ============================================================
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/sw.js')
+                .then(() => console.log('✅ SW зарегистрирован'))
+                .catch(err => console.log('❌ SW ошибка:', err));
+        }
 
         // ============================================================
         // СТАРТ
