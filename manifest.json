@@ -1,0 +1,26 @@
+{
+  "name": "Каллиграфия",
+  "short_name": "Каллиграфия",
+  "description": "Тренажёр китайской каллиграфии с порядком черт",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "theme_color": "#1a1512",
+  "background_color": "#1a1512",
+  "categories": ["education", "utilities"],
+  "lang": "ru",
+  "icons": [
+    {
+      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='80' fill='%23f5efe6'/%3E%3Crect x='16' y='16' width='480' height='480' rx='64' fill='none' stroke='%23c4b5a0' stroke-width='8'/%3E%3Ctext x='256' y='340' font-family='Georgia,serif' font-size='280' text-anchor='middle' fill='%231a1a1a'%3E永%3C/text%3E%3C/svg%3E",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='80' fill='%23f5efe6'/%3E%3Crect x='16' y='16' width='480' height='480' rx='64' fill='none' stroke='%23c4b5a0' stroke-width='8'/%3E%3Ctext x='256' y='340' font-family='Georgia,serif' font-size='280' text-anchor='middle' fill='%231a1a1a'%3E永%3C/text%3E%3C/svg%3E",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}
